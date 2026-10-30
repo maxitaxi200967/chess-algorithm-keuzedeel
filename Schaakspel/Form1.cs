@@ -61,8 +61,6 @@ namespace Schaakspel
 
         private void VeldKnop_Click(object sender, EventArgs e)
         {
-            if (timerComputer.Enabled) return; // Computer denkt nog na
-
             Button geklikteKnop = (Button)sender;
             Point punt = (Point)geklikteKnop.Tag;
             int r = punt.X;
@@ -77,7 +75,7 @@ namespace Schaakspel
 
                 if (gekozenZet != null)
                 {
-                    // Geldige zet uitvoeren!
+                    // Geldige zet uitvoeren
                     VoerZetUit(gekozenZet);
                     Deselecteer();
                     return;
@@ -131,24 +129,6 @@ namespace Schaakspel
 
             UpdateBordWeergave();
             ControleerSpelstatus();
-
-            // Als we tegen de computer spelen en Zwart is aan de beurt, start de AI timer
-            if (rbVsComputer.Checked && _bord.AanDeBeurt == Kleur.Zwart && !_bord.IsSchaakmat() && !_bord.IsPat())
-            {
-                lblStatus.Text = "Computer berekent zet...";
-                timerComputer.Start();
-            }
-        }
-
-        private void timerComputer_Tick(object sender, EventArgs e)
-        {
-            timerComputer.Stop();
-
-            Zet aiZet = SchaakAI.KiesZet(_bord);
-            if (aiZet != null)
-            {
-                VoerZetUit(aiZet);
-            }
         }
 
         private void UpdateBordWeergave()
@@ -197,10 +177,6 @@ namespace Schaakspel
 
             // Labels bijwerken
             string spelerTekst = _bord.AanDeBeurt == Kleur.Wit ? "Wit" : "Zwart";
-            if (rbVsComputer.Checked)
-            {
-                spelerTekst += (_bord.AanDeBeurt == Kleur.Wit) ? " (Jij)" : " (Computer)";
-            }
             lblBeurt.Text = $"Beurt: {spelerTekst}";
 
             int score = _bord.Evalueer();
@@ -237,7 +213,6 @@ namespace Schaakspel
 
         private void btnNieuwSpel_Click(object sender, EventArgs e)
         {
-            timerComputer.Stop();
             _bord.ResetBord();
             _geselecteerdeRij = -1;
             _geselecteerdeKolom = -1;
@@ -250,23 +225,11 @@ namespace Schaakspel
 
         private void btnOngedaanMaken_Click(object sender, EventArgs e)
         {
-            if (timerComputer.Enabled) return;
-
-            // Als we tegen computer spelen, draaien we 2 zetten terug (computer + speler)
-            if (rbVsComputer.Checked)
+            _bord.MaakZetOngedaan();
+            if (lstGeschiedenis.Items.Count > 0)
             {
-                _bord.MaakZetOngedaan();
-                if (lstGeschiedenis.Items.Count > 0) lstGeschiedenis.Items.RemoveAt(lstGeschiedenis.Items.Count - 1);
-
-                _bord.MaakZetOngedaan();
-                if (lstGeschiedenis.Items.Count > 0) lstGeschiedenis.Items.RemoveAt(lstGeschiedenis.Items.Count - 1);
+                lstGeschiedenis.Items.RemoveAt(lstGeschiedenis.Items.Count - 1);
             }
-            else
-            {
-                _bord.MaakZetOngedaan();
-                if (lstGeschiedenis.Items.Count > 0) lstGeschiedenis.Items.RemoveAt(lstGeschiedenis.Items.Count - 1);
-            }
-
             Deselecteer();
         }
     }

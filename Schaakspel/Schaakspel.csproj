@@ -56,7 +56,6 @@
     <Compile Include="SchaakStuk.cs" />
     <Compile Include="Zet.cs" />
     <Compile Include="SchaakBord.cs" />
-    <Compile Include="SchaakAI.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
