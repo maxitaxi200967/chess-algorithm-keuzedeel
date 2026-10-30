@@ -1,1 +1,0 @@
-﻿# Source code voor het schaakalgoritme prototype
